@@ -1,0 +1,27 @@
+name: "sigul-sign"
+description: "Sign artifacts with Sigul"
+
+inputs:
+  sign-type:
+    description: "One of 'sign-data', 'sign-dir', or 'sign-git-tag'"
+    required: true
+    default: "sign-data"
+  sign-object:
+    description: "Object (file, directory, or git tag) to sign"
+    required: true
+  sigul-ip:
+    description: "IP address of sigul server"
+    required: true
+  sigul-uri:
+    description: "URI of sigul server"
+    required: true
+
+runs:
+  using: "docker"
+  image: Dockerfile
+  args:
+    - ${{ inputs.sign-type }}
+    - ${{ inputs.sign-object }}
+  env:
+    SIGUL_IP: ${{ inputs.sigul-ip }}
+    SIGUL_URI: ${{ inputs.sigul-uri }}
