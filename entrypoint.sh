@@ -17,5 +17,6 @@ sed -i 's/$/\x0/' "${SIGUL_PASS_FILE}"
 # $1 is sign-type and $2 is sign-object
 cd $GITHUB_WORKSPACE
 sigul --batch $1 -a -o test.asc odpi-release-2021 $2 < "${SIGUL_PASS_FILE}"
+chmod 644 *.asc
 pwd
 ls -al
