@@ -1,7 +1,7 @@
 #!/bin/bash -l
 SIGUL_PASS_FILE=/etc/sigul/sigul-pass
 
-# Used values passed in from the calling workflow to create needed files
+# Use values passed in from the calling workflow to create needed files
 echo "$SIGUL_IP" "$SIGUL_URI" >> /etc/hosts
 mkdir -p /etc/sigul
 echo "$SIGUL_CONF" > /etc/sigul/client.conf
@@ -17,8 +17,13 @@ tar Jxf sigul.tar.xz
 sed -i 's/$/\x0/' "${SIGUL_PASS_FILE}"
 
 cd $GITHUB_WORKSPACE
-# $1 is sign-type and $2 is sign-object
-sigul --batch $1 -a -o $2.asc odpi-release-2021 $2 < "${SIGUL_PASS_FILE}"
-# We need the signature files to be readable by the workflow
-chmod 644 *.asc
-ls -al
+if [ $SIGN_TYPE = "sign-data" ]; then
+    sigul --batch $SIGN_TYPE -o $SIGN_OBJECT.asc $SIGUL_KEY_NAME $SIGN_OBJECT < "${SIGUL_PASS_FILE}"
+    # We need the signature files to be readable by the workflow
+    chmod 644 *.asc
+elif [ $SIGN_TYPE = "sign-git-tag" ]; then
+    git remote add github "https://${GH_USER}:${GH_KEY}@github.com/${GITHUB_REPOSITORY}"
+    git fetch --tags
+    sigul --batch $SIGN_TYPE $SIGUL_KEY_NAME $SIGN_OBJECT < "${SIGUL_PASS_FILE}"
+    git push -f github $SIGN_OBJECT
+fi

@@ -3,11 +3,11 @@ description: "Sign artifacts with Sigul"
 
 inputs:
   sign-type:
-    description: "One of 'sign-data', 'sign-dir', or 'sign-git-tag'"
-    required: true
+    description: "Either 'sign-data' or 'sign-git-tag'"
+    required: false
     default: "sign-data"
   sign-object:
-    description: "Object (file, directory, or git tag) to sign"
+    description: "File or git tag to sign"
     required: true
   sigul-ip:
     description: "IP address of sigul server"
@@ -18,22 +18,34 @@ inputs:
   sigul-conf:
     description: "Config file for sigul connection"
     required: true
+  sigul-key-name:
+    description: "The key name on the server to utilize"
+    required: true
   sigul-pass:
     description: "Password for sigul connection"
     required: true
   sigul-pki:
     description: "PKI info for sigul connection"
     required: true
+  gh-user:
+    description: "GitHub user for pushing signed tags"
+    required: false
+    default: GITHUB_ACTOR
+  gh-key:
+    description: "GitHub API key for pushing signed tags"
+    required: false
 
 runs:
   using: "docker"
   image: Dockerfile
-  args:
-    - ${{ inputs.sign-type }}
-    - ${{ inputs.sign-object }}
   env:
+    SIGN_TYPE: ${{ inputs.sign-type }}
+    SIGN_OBJECT: ${{ inputs.sign-object }}
     SIGUL_IP: ${{ inputs.sigul-ip }}
     SIGUL_URI: ${{ inputs.sigul-uri }}
     SIGUL_CONF: ${{ inputs.sigul-conf }}
+    SIGUL_KEY_NAME: ${{ inputs.sigul-key-name }}
     SIGUL_PASS: ${{ inputs.sigul-pass }}
     SIGUL_PKI: ${{ inputs.sigul-pki }}
+    GH_USER: ${{ inputs.gh-user }}
+    GH_KEY: ${{ inputs.gh-key }}

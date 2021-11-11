@@ -13,7 +13,7 @@ gpgkey=https://infrastructure.fedoraproject.org/repo/infra/RPM-GPG-KEY-INFRA-TAG
 includepkgs=sigul* \n\
 skip_if_unavailable=True' > /etc/yum.repos.d/fedora-infra-sigul.repo
 
-RUN yum install -y -q sigul
+RUN yum install -y -q sigul git
 
 COPY entrypoint.sh /entrypoint.sh
 
