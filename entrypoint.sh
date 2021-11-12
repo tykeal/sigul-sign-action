@@ -18,8 +18,14 @@ sed -i 's/$/\x0/' "${SIGUL_PASS_FILE}"
 
 cd "$GITHUB_WORKSPACE" || exit 1
 if [ "$SIGN_TYPE" = "sign-data" ]; then
-    sigul --batch "$SIGN_TYPE" -o "$SIGN_OBJECT.asc" "$SIGUL_KEY_NAME" "$SIGN_OBJECT" < "${SIGUL_PASS_FILE}"
+    while read -r filename && [ -n "$filename" ]; do
+        echo "Signing $filename"
+        filename_dashed="${filename//\//-}"
+        sigul --batch "$SIGN_TYPE" -o "$filename_dashed.asc" "$SIGUL_KEY_NAME" \
+            "$filename" < "${SIGUL_PASS_FILE}"
+    done <<< "${SIGN_OBJECT}"
     # We need the signature files to be readable by the workflow
+    ls -al
     chmod 644 ./*.asc
 elif [ "$SIGN_TYPE" = "sign-git-tag" ]; then
     git remote add github "https://${GH_USER}:${GH_KEY}@github.com/${GITHUB_REPOSITORY}"
