@@ -48,4 +48,4 @@ Default: GITHUB_ACTOR (the name of the person or app that initiated the workflow
 ## `gh-key`
 
 An API key for the user specified in `gh-user`. This is not a required field for
-sign-data actions, but *MUST* be specified for sign-git-tag actions.
+sign-data actions, but **MUST** be specified for sign-git-tag actions.
