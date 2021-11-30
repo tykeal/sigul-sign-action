@@ -2,6 +2,76 @@
 
 This action is used to sign build artifacts and git tags using a Sigul server.
 
+# Usage
+
+### Sign an object that is available in the workspace
+
+```yaml
+- uses: lfit/sigul-sign@v1
+  with:
+      sign-type: "sign-data"
+      sign-object: ${{ github.workspace }}/artifacts/mypackage.tar.gz
+      sigul-key-name: "my-release-key"
+      gh-user: automation-username
+      gh-key: ${{ secrets.GHA_TOKEN }}
+      sigul-ip: ${{ secrets.SIGUL_IP }}
+      sigul-uri: ${{ secrets.SIGUL_URI }}
+      sigul-conf: ${{ secrets.SIGUL_CONF }}
+      sigul-pass: ${{ secrets.SIGUL_PASS }}
+      sigul-pki: ${{ secrets.SIGUL_PKI }}
+
+# This should produce an object named ${sign-object}.asc. We will then need to
+# upload the artifact.
+- uses: actions/upload-artifact@v2
+  with:
+      name: Signatures
+      path: ${{ github.workspace }}/mypackage.tar.gz.asc
+```
+
+### Sign multiple objects in the workspace
+
+```yaml
+- uses: lfit/sigul-sign@v1
+  with:
+      sign-type: "sign-data"
+      sign-object: |
+          file.tar.gz
+          artifacts/my-file.jar
+          docs/signme.md
+      sigul-key-name: "my-release-key"
+      gh-user: automation-username
+      gh-key: ${{ secrets.GHA_TOKEN }}
+      sigul-ip: ${{ secrets.SIGUL_IP }}
+      sigul-uri: ${{ secrets.SIGUL_URI }}
+      sigul-conf: ${{ secrets.SIGUL_CONF }}
+      sigul-pass: ${{ secrets.SIGUL_PASS }}
+      sigul-pki: ${{ secrets.SIGUL_PKI }}
+
+# All files will be written to the workspace root. Files such as "dir/subdir/file.ext"
+# will create a signature file named "dir-subdir-file.ext.asc".
+- uses: actions/upload-artifact@v2
+  with:
+      name: Signatures
+      path: ${{ github.workspace }}/*.asc
+```
+
+### Sign a git tag
+
+```yaml
+- uses: lfit/sigul-sign@v1
+  with:
+      sign-type: "sign-git-tag"
+      sign-object: "v1.1" # Unsigned annotated tag in repo
+      sigul-key-name: "my-release-key"
+      gh-user: automation-username
+      gh-key: ${{ secrets.GHA_TOKEN }}
+      sigul-ip: ${{ secrets.SIGUL_IP }}
+      sigul-uri: ${{ secrets.SIGUL_URI }}
+      sigul-conf: ${{ secrets.SIGUL_CONF }}
+      sigul-pass: ${{ secrets.SIGUL_PASS }}
+      sigul-pki: ${{ secrets.SIGUL_PKI }}
+```
+
 ## Inputs
 
 ## `sign-type`
